@@ -1,0 +1,58 @@
+@prefix rmlc: <http://www.ex.org/ns/rmlc#> .
+@prefix rr: <http://www.w3.org/ns/r2rml#> .
+@prefix sql: <http://w3.org/ns/sql#> .
+@prefix gtfs: <http://vocab.gtfs.org/terms#> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+
+<#TriplesMap1>
+rr:logicalTable [
+      rr:tableName "TRIPS"
+  ];
+  rr:subjectMap [
+    a rr:Subject;
+    rr:template "http://linkedgtfs.com/CITY/trips/{TRIP_ID}";
+    rr:termType rr:IRI;
+    rr:class gtfs:Trip;
+  ];
+  rr:predicateObjectMap[
+    rr:predicate gtfs:route;
+    rr:objectMap [
+      rr:parentTriplesMap <TriplesMapRoute>;
+      rr:joinCondition [
+        rmlc:child [
+          rmlc:colums ["ROUTE_ID","LONG_NAME"];
+          rmlc:functions "CONCAT(LOWER(columns[0]), SUBSTRING(columns[1],1,5))";
+        ];
+        rmlc:parent [
+          rmlc:columns ["ROUTE_ID","SHORT_NAME"];
+          rmlc:functions "CONCAT(TRIM(colums[0]),':',REPLACE(columns[1],'-',' '))";
+        ];
+      ];
+    ];
+  ];
+.
+
+
+<TriplesMapRoute>
+
+  rr:logicalTable [
+    rr:tableName "ROUTES"
+  ];
+
+  rr:subjectMap [
+    a rr:Subject;
+    rr:template "http://linkedgtfs.com/CITY/routes/{ROUTE_ID}";
+    rr:termType rr:IRI;
+    rr:class gtfs:Route;
+  ];
+
+  rr:predicateObjectMap[
+    rr:predicate gtfs:shortName;
+    rr:objectMap [
+      rr:datatype xsd:string;
+      rmlc:columns ["ROUTE_SHORT_NAME"];
+      rmlc:functions "LOWER(columns[0])"
+    ];
+  ];
+.
+
