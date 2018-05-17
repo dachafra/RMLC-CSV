@@ -36,12 +36,10 @@ Also you have to define the connection properties of your MySQL server:
 ### How to run it?
 After the config.json file has been edited, run:
 ```bash
-{
   mvn clean install
   cp target/RMLC-1.0.jar .
   mkdir sql
   java -jar RMLC-1.0.jar path/to/config/json/file
-}
 ```
 
 ## Contributions (in progress)
