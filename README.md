@@ -5,7 +5,7 @@ RMLC is the RDF mapping language for CSV files based on the W3C standard R2RML. 
 
 
 ## How it works?
-Run RMLC is very simple, you only have to define along the  config.json file defining the following properties per each dataset:
+Run RMLC is very simple, you only have to define along the config.json file the following properties per each dataset:
 - **databaseName:** The name of your relational database **Is a mandatory parameter**.
 - **url:** The url or a local path where the data are **Is a mandatory parameter**.
 - **format:** The format of the files **Is not a mandatory parameter**.
