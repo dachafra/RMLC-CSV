@@ -1,13 +1,11 @@
 # RMLC: RDF Mapping Language for CSV files
 RMLC is the RDF mapping language for CSV files based on the W3C standard R2RML. At this moment, RMLC main contributions are:
-- Exploit the implicit joins between CSV files applying general and individual transformation functions.
-- Create an enriched database schema with the data types of each column (numbers, dates and datetimes) and
-the primary and foreign keys. 
+- Exploit the implicit joins between CSV files applying SQL transformation functions.
+- Create an enriched database schema with the data types of each column (numbers, dates and datetimes) and the primary keys. 
 
 
 ## How it works?
-Run RMLC is very simple, you only have to define along the 
-config.json file defining the following properties per each dataset:
+Run RMLC is very simple, you only have to define along the  config.json file defining the following properties per each dataset:
 - **databaseName:** The name of your relational database **Is a mandatory parameter**.
 - **url:** The url or a local path where the data are **Is a mandatory parameter**.
 - **format:** The format of the files **Is not a mandatory parameter**.
@@ -18,10 +16,10 @@ config.json file defining the following properties per each dataset:
 This is an example of the configuration file:
 ```json
 {
-  "databaseName": "cardValidationsBus",
-  "url":"http://mappingpedia.es/cardValidations.zip",
+  "databaseName": "tripsEMT",
+  "url":"http://gtfs.es/emt.zip",
   "compression":"zip",
-  "mapping":"http://mappingpedia.es/cardValidationsMapping.rmlc.ttl"
+  "mapping":"http://gtfs.es/mapping.rmlc.ttl"
 }
 ```
 
@@ -32,6 +30,17 @@ Also you have to define the connection properties of your MySQL server:
   "mysqlURL": "jdbc:mysql://localhost:3306/",
   "mysqluser":"user",
   "mysqlpassword":"password"
+}
+```
+
+### How to run it?
+After the config.json file has been edited, run:
+```bash
+{
+  mvn clean install
+  cp target/RMLC-1.0.jar .
+  mkdir sql
+  java -jar RMLC-1.0.jar path/to/config/json/file
 }
 ```
 
@@ -47,9 +56,8 @@ rr:predicateObjectMap[
     rr:predicate foaf:phone;
     rr:objectMap [
       rr:datatype xsd:string;
-      rml:reference "agency_phone";
-      rmlc:individualTransFunct rmlcf:lower;
-      rmlc:individualTransFunct rmlcf:trim;
+      rmlc:columns ["agency_phone"];
+      rmlc:functions "TRIM(LOWER(columns[1]))";
     ];
   ];
 ```
@@ -59,22 +67,13 @@ joins that other mapping languages as R2RML or RML haven't taken into account. L
 ```
 rr:joinCondition [
     rmlc:child [
-      rmlc:columFunction [
-        rr:child 'ROUTE_ID';
-        rmlc:individualTransFunct rmlcf:lower;
-      ]
-    ]
+      rmlc:colums ["ROUTES_ID"];
+      rmlc:functions "LOWER(columns[0])";
+    ];
     rmlc:parent [
-      rmlc:generalTransFunct rmlcf:concat;  
-      rmlc:columFunction [
-        rr:child 'SHORT_NAME';
-        rmlc:individualTransFunct rmlcf:ltrim;
-      ]
-      rmlc:columFunction [
-        rr:child 'SHORT_ID';
-        rmlc:individualTransFunct rmlcf:lower;
-      ]
-    ]
+      rmlc:columns ["SHORT_NAME","SHORT_ID"];
+      rmlc:functions "CONCAT(TRIM(columns[0]),'-',LOWER(columns[1])";
+    ];
 ];
 ```
 - Obtain an enriched database schema to load the set of CSV files in a MySQL server: at this moment,
@@ -87,4 +86,3 @@ type is a string).
 
 
 ## Authors
-David Chaves-Fraga - dchaves@fi.upm.es
