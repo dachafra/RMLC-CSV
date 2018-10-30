@@ -54,8 +54,7 @@ rr:predicateObjectMap[
     rr:predicate foaf:phone;
     rr:objectMap [
       rr:datatype xsd:string;
-      rmlc:columns ["agency_phone"];
-      rmlc:functions "TRIM(LOWER(columns[1]))";
+      rmlc:functions "TRIM(LOWER({agency_phone}))";
     ];
   ];
 ```
@@ -65,12 +64,10 @@ joins that other mapping languages as R2RML or RML haven't taken into account. L
 ```
 rr:joinCondition [
     rmlc:child [
-      rmlc:colums ["ROUTES_ID"];
-      rmlc:functions "LOWER(columns[0])";
+      rmlc:functions "LOWER({ROUTES_ID})";
     ];
     rmlc:parent [
-      rmlc:columns ["SHORT_NAME","SHORT_ID"];
-      rmlc:functions "CONCAT(TRIM(columns[0]),'-',LOWER(columns[1])";
+      rmlc:functions "CONCAT(TRIM({SHORT_NAME}),'-',LOWER({SHORT_ID})";
     ];
 ];
 ```
