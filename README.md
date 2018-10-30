@@ -81,3 +81,4 @@ type is a string).
 
 
 ## Authors
+- David Chaves-Fraga
